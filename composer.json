@@ -4,7 +4,7 @@
     "require": {
         "php": "^7.0",
         "ext-curl": "*",
-        "illuminate/support": "^5.2"
+        "illuminate/support": "^5.1"
     },
     "autoload": {
       "psr-4": {
