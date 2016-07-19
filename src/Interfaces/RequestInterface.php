@@ -44,6 +44,23 @@ interface RequestInterface
     public function getParams() : array;
 
     /**
+     * @return string
+     */
+    public function getEndpoint() : string;
+
+    /**
+     * @param string $endpoint
+     * 
+     * @return RequestInterface
+     */
+    public function setEndpoint(string $endpoint) : RequestInterface;
+
+    /**
+     * @return string
+     */
+    public function getUrl() : string;
+
+    /**
      * @param Authenticator $auth
      * 
      * @return RequestInterface

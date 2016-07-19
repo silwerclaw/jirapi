@@ -8,6 +8,7 @@
 
 namespace Silwerclaw\Jirapi;
 
+use GuzzleHttp\Client;
 use Silwerclaw\Jirapi\Interfaces\RequestInterface;
 use Silwerclaw\Jirapi\Interfaces\ResponseInterface;
 
@@ -24,9 +25,19 @@ class Request implements RequestInterface
     protected $method;
 
     /**
+     * @var string
+     */
+    protected $endpoint;
+
+    /**
      * @var array
      */
     protected $params = [];
+
+    /**
+     * @var Client
+     */
+    protected $httpClient;
 
     /**
      * Request constructor.
@@ -35,6 +46,7 @@ class Request implements RequestInterface
     public function __construct(Authenticator $authenticator)
     {
         $this->authenticator = $authenticator;
+        $this->httpClient = new Client();
     }
 
 
@@ -43,7 +55,15 @@ class Request implements RequestInterface
      */
     public function doRequest() : ResponseInterface
     {
-        // TODO: Implement doRequest() method.
+        $request = $this->httpClient->createRequest(
+            $this->method,
+            $this->getUrl(),
+            $this->makeRequestConfig()
+        );
+        
+        $result = $this->httpClient->send($request)->json();
+        
+        return new Response($this, $result);
     }
 
     /**
@@ -104,5 +124,51 @@ class Request implements RequestInterface
     public function getAuthenticator() : Authenticator
     {
         return $this->authenticator;
+    }
+
+    /**
+     * @return string
+     */
+    public function getEndpoint() : string
+    {
+        return $this->endpoint;
+    }
+
+    /**
+     * @param string $endpoint
+     *
+     * @return RequestInterface
+     */
+    public function setEndpoint(string $endpoint) : RequestInterface
+    {
+        $this->endpoint = $endpoint;
+        
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getUrl() : string
+    {
+        return rtrim($this->authenticator->getHost(), '/') . '/' . ltrim($this->endpoint, '/');
+    }
+
+    /**
+     * @return array
+     */
+    protected function makeRequestConfig() : array
+    {
+        $config = [];
+        
+        //add authorization header
+        $config['auth']= [$this->authenticator->getLogin(), $this->authenticator->getPassword()];
+        
+        //add post data
+        if ($this->method == 'POST' && !empty($this->params)) {
+            $config['body'] = $this->params;
+        }
+        
+        return $config;
     }
 }

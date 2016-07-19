@@ -9,7 +9,31 @@
 namespace Silwerclaw\Jirapi\Interfaces;
 
 
-class ResponseInterface
+interface ResponseInterface
 {
+
+    /**
+     * @param RequestInterface $request
+     * 
+     * @return ResponseInterface
+     */
+    public function setRequest(RequestInterface $request) : ResponseInterface;
+
+    /**
+     * @return RequestInterface
+     */
+    public function getRequest() : RequestInterface;
+
+    /**
+     * @param array $raw
+     *
+     * @return ResponseInterface
+     */
+    public function setRaw(array $raw) : ResponseInterface;
+
+    /**
+     * @return array
+     */
+    public function getRaw() : array;
 
 }
