@@ -2,6 +2,13 @@
     "name": "silwerclaw/jirapi",
     "description": "PHP Jira REST API client",
     "require": {
-        "php": "^7.0"
+        "php": "^7.0",
+        "ext-curl": "*",
+        "illuminate/support": "^5.2"
+    },
+    "autoload": {
+      "psr-4": {
+        "Silwerclaw\\Jirapi\\": ["src/", "tests/"]
+      }
     }
 }
