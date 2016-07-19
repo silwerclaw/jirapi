@@ -1,0 +1,7 @@
+{
+    "name": "silwerclaw/jirapi",
+    "description": "PHP Jira REST API client",
+    "require": {
+        "php": "^7.0"
+    }
+}
