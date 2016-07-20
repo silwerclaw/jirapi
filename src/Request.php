@@ -162,11 +162,14 @@ class Request implements RequestInterface
         $config = [];
         
         //add authorization header
-        $config['auth']= [$this->authenticator->getLogin(), $this->authenticator->getPassword()];
+        $config['auth'] = [$this->authenticator->getLogin(), $this->authenticator->getPassword()];
+
+        //add proper content type
+        $config['headers']['Content-Type'] = 'application/json'; 
         
         //add post data
         if ($this->method == 'POST' && !empty($this->params)) {
-            $config['body'] = $this->params;
+            $config['body'] = json_encode($this->params);
         }
         
         return $config;
