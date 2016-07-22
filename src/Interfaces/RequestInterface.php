@@ -9,15 +9,17 @@
 namespace Silwerclaw\Jirapi\Interfaces;
 
 
-use Silwerclaw\Jirapi\Authenticator;
-
+/**
+ * Interface RequestInterface
+ * @package Silwerclaw\Jirapi\Interfaces
+ */
 interface RequestInterface
 {
 
     /**
-     * @return ResponseInterface
+     * @return array
      */
-    public function doRequest() : ResponseInterface;
+    public function doRequest() : array;
 
     /**
      * @param string $method
@@ -59,17 +61,5 @@ interface RequestInterface
      * @return string
      */
     public function getUrl() : string;
-
-    /**
-     * @param Authenticator $auth
-     * 
-     * @return RequestInterface
-     */
-    public function setAuthenticator(Authenticator $auth) : RequestInterface;
-
-    /**
-     * @return Authenticator
-     */
-    public function getAuthenticator() : Authenticator;
 
 }

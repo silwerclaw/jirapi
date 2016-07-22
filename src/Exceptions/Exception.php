@@ -8,7 +8,10 @@
 
 namespace Silwerclaw\Jirapi\Exceptions;
 
-
+/**
+ * Class Exception
+ * @package Silwerclaw\Jirapi\Exceptions
+ */
 class Exception extends \Exception
 {
 

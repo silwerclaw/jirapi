@@ -8,7 +8,10 @@
 
 namespace Silwerclaw\Jirapi;
 
-
+/**
+ * Class Authenticator
+ * @package Silwerclaw\Jirapi
+ */
 class Authenticator
 {
 

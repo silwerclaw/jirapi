@@ -9,9 +9,13 @@
 namespace Silwerclaw\Jirapi;
 
 use GuzzleHttp\Client;
+use Silwerclaw\Jirapi\Exceptions\Exception;
 use Silwerclaw\Jirapi\Interfaces\RequestInterface;
-use Silwerclaw\Jirapi\Interfaces\ResponseInterface;
 
+/**
+ * Class Request
+ * @package Silwerclaw\Jirapi
+ */
 class Request implements RequestInterface
 {
     /**
@@ -41,19 +45,22 @@ class Request implements RequestInterface
 
     /**
      * Request constructor.
-     * @param Authenticator $authenticator
      */
-    public function __construct(Authenticator $authenticator)
+    public function __construct()
     {
-        $this->authenticator = $authenticator;
+        $this->authenticator = Jirapi::getAuthenticator();
+
+        if (!($this->authenticator instanceof Authenticator)) {
+            throw new Exception('Authenticator not defined for Jira REST API');
+        }
+        
         $this->httpClient = new Client();
     }
 
-
     /**
-     * @return ResponseInterface
+     * @return array
      */
-    public function doRequest() : ResponseInterface
+    public function doRequest() : array
     {
         $request = $this->httpClient->createRequest(
             $this->method,
@@ -61,9 +68,7 @@ class Request implements RequestInterface
             $this->makeRequestConfig()
         );
         
-        $result = $this->httpClient->send($request)->json();
-        
-        return new Response($this, $result);
+        return $this->httpClient->send($request)->json();
     }
 
     /**
@@ -167,9 +172,13 @@ class Request implements RequestInterface
         //add proper content type
         $config['headers']['Content-Type'] = 'application/json'; 
         
-        //add post data
-        if ($this->method == 'POST' && !empty($this->params)) {
-            $config['body'] = json_encode($this->params);
+        //add parameters
+        if (!empty($this->params)) {
+            if ($this->method == 'GET') {
+                $config['query'] = $this->params;
+            } else {
+                $config['body'] = json_encode($this->params);
+            }
         }
         
         return $config;
