@@ -1,5 +1,5 @@
-# jirapi
-PHP Jira Rest API client
+# Jirapi
+[![Build Status](https://travis-ci.org/silwerclaw/jirapi.svg?branch=master)](https://travis-ci.org/silwerclaw/jirapi)
 
-*Package is under hard development - pls do not use it for your production environment*
+PHP Jira Rest API client
 
