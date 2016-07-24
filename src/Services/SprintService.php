@@ -8,17 +8,24 @@
 
 namespace Silwerclaw\Jirapi\Services;
 use Silwerclaw\Jirapi\Entities\Sprint;
+use Silwerclaw\Jirapi\Exceptions\Exception;
+use Silwerclaw\Jirapi\Interfaces\ServiceInterface;
 use Silwerclaw\Jirapi\Request;
+use Silwerclaw\Jirapi\Validators\SprintValidator;
 
 /**
  * Class SprintService
  * @package Silwerclaw\Jirapi\Services
  */
-class SprintService
+class SprintService extends Service
 {
 
+    /**
+     * @var array
+     */
     protected $endpoints = [
-        'get' => '/rest/agile/1.0/sprint/{sprintId}'
+        'get'    => '/rest/agile/1.0/sprint/{sprintId}',
+        'create' => '/rest/agile/1.0/sprint'
     ];
 
     /**
@@ -30,20 +37,36 @@ class SprintService
      */
     public function get(int $sprintId)
     {
-        $request = new Request();
-        $endpoint = str_replace('{sprintId}', $sprintId, $this->endpoints['get']);
+        $endpoint = str_replace('{sprintId}', $sprintId, $this->endpoints[__FUNCTION__]);
+        
+        $request = $this->newRequest()->setMethod('GET')->setEndpoint($endpoint);
 
-        return $request->setMethod('GET')->setEndpoint($endpoint)->doRequest();
+        return new Sprint($this->sendRequest($request));
     }
 
     /**
      * Create new Sprint with the given $data
      *
      * @param array $data
+     *
+     * @throws Exception
+     * @return Sprint
      */
     public function create(array $data)
     {
+        $validator = new SprintValidator($data);
+        
+        if ($validator->validate()) {
 
+            $request = $this->newRequest()
+                ->setMethod('POST')
+                ->setEndpoint($this->endpoints[__FUNCTION__])
+                ->setParams($data);
+
+            return new Sprint($this->sendRequest($request));
+        }
+
+        return null;
     }
 
     /**

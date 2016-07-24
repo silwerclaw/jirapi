@@ -8,7 +8,6 @@
 
 namespace Silwerclaw\Jirapi;
 
-use Silwerclaw\Jirapi\Interfaces\ServiceInterface;
 
 /**
  * Class Builder
@@ -18,39 +17,10 @@ class Builder
 {
 
     /**
-     * @var int
+     * @var array
      */
-    protected $limit = 50;
+    protected $params = [];
 
-    /**
-     * @var
-     */
-    protected $skip = 0;
-
-    /**
-     * @var int
-     */
-    protected $total = 0;
-
-    /**
-     * @var string
-     */
-    protected $jql = '';
-
-    /**
-     * @var ServiceInterface
-     */
-    protected $service;
-
-    /**
-     * Builder constructor.
-     * @param ServiceInterface $service
-     */
-    public function __construct(ServiceInterface $service)
-    {
-        $this->service = $service;
-    }
-    
     /**
      * @param $limit
      *
@@ -58,38 +28,29 @@ class Builder
      */
     public function limit($limit)
     {
-        $this->limit = $limit;
+        $this->params['maxResults'] = $limit;
 
         return $this;
     }
 
     /**
      * @param $skip
-     * 
+     *
      * @return $this
      */
     public function skip($skip)
     {
-        $this->skip = $skip;
+        $this->params['startAt'] = $skip;
 
         return $this;
     }
 
     /**
-     * @param string $jql
-     *
-     * @return $this
+     * @return array
      */
-    public function jql(string $jql)
+    public function toParams()
     {
-        $this->jql = $jql;
-
-        return $this;
-    }
-
-    public function __call($method, $arguments = [])
-    {
-        return call_user_func_array([$this->service, $method], $arguments);
+        return $this->params;
     }
 
 }

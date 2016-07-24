@@ -71,7 +71,7 @@ class Jirapi
             throw new Exception('Service "' . $name . '" not found');
         }
 
-        return new Builder(new $className);
+        return with(new $className)->initBuilder();
     }
 
 }

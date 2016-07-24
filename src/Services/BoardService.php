@@ -10,8 +10,11 @@ namespace Silwerclaw\Jirapi\Services;
 
 
 use Silwerclaw\Jirapi\Collections\Collection;
+use Silwerclaw\Jirapi\Entities\Board;
 use Silwerclaw\Jirapi\Entities\Sprint;
+use Silwerclaw\Jirapi\Exceptions\Exception;
 use Silwerclaw\Jirapi\Request;
+use Silwerclaw\Jirapi\Validators\BoardValidator;
 
 /**
  * Class BoardService
@@ -21,15 +24,117 @@ class BoardService extends Service
 {
 
     protected $endpoints = [
-        'getSprints' => '/rest/agile/1.0/board/{boardId}/sprint',
+        'get'           => '/rest/agile/1.0/board/{boardId}',
+        'getAll'        => '/rest/agile/1.0/board',
+        'create'        => '/rest/agile/1.0/board',
+        'delete'        => '/rest/agile/1.0/board/{boardId}',
+        'getSprints'    => '/rest/agile/1.0/board/{boardId}/sprint',
     ];
 
-    public function get($boardId)
+    /**
+     * Returns the board for the given $boardId.
+     * This board will only be returned if the user has permission to view it.
+     *
+     * @param int $boardId
+     * 
+     * @return Board
+     */
+    public function get(int $boardId)
+    {
+        $request = $this->newRequest()
+            ->setMethod('GET')
+            ->setEndpoint(str_replace('{boardId}', $boardId, $this->endpoints[__FUNCTION__]));
+        
+        return new Board($this->sendRequest($request));
+    }
+
+    /**
+     * Returns all boards.
+     * This only includes boards that the user has permission to view.
+     *
+     * @param array $params
+     *
+     * @return Collection
+     */
+    public function getAll($params = [])
+    {
+        $request = $this->newRequest()
+            ->setMethod('GET')
+            ->setEndpoint($this->endpoints[__FUNCTION__])
+            ->setParams($params);
+
+        $response = $this->sendRequest($request);
+
+        return new Collection($this->transformValues($response['values'], Board::class));
+    }
+
+    /**
+     * Creates a new board.
+     * Board name, type and filter Id is required.
+     *
+     * @param array $data
+     * 
+     * @throws Exception
+     * 
+     * @return Board
+     */
+    public function create(array $data)
+    {
+        $validator = new BoardValidator($data);
+
+        if ($validator->validate()) {
+
+            $request = $this->newRequest()
+                ->setMethod('POST')
+                ->setEndpoint($this->endpoints[__FUNCTION__])
+                ->setParams($data);
+
+            return new Board($this->sendRequest($request));
+        }
+
+        return null;
+    }
+
+    /**
+     * Deletes the board.
+     *
+     * @param int $boardId
+     */
+    public function delete(int $boardId)
     {
 
     }
 
     /**
+     * Returns all issues from the board's backlog, for the given $boardId.
+     * This only includes issues that the user has permission to view.
+     * The backlog contains incomplete issues that are not assigned to any future or active sprint.
+     * Note, if the user does not have permission to view the board, no issues will be returned at all.
+     * Issues returned from this resource include Agile fields, like sprint, closedSprints, flagged, and epic.
+     * By default, the returned issues are ordered by rank.
+     *
+     * @param int $boardId
+     */
+    public function getBackLogIssues(int $boardId)
+    {
+
+    }
+
+    /**
+     * Get the board configuration
+     *
+     * @param int $boardId
+     */
+    public function getConfiguration(int $boardId)
+    {
+
+    }
+
+
+    /**
+     * Returns all sprints from a board, for a given $boardId.
+     * This only includes sprints that the user has permission to view.
+     *
      * @param int $boardId
      * @param array $params
      * 
@@ -37,15 +142,14 @@ class BoardService extends Service
      */
     public function getSprints(int $boardId, $params = [])
     {
-        $request = new Request();
-
-        $rawData = $request
+        $request = $this->newRequest()
             ->setMethod('GET')
             ->setEndpoint(str_replace('{boardId}', $boardId, $this->endpoints[__FUNCTION__]))
-            ->setParams($params)
-            ->doRequest();
+            ->setParams($params);
 
-        return new Collection($this->transformValues($rawData['values'], Sprint::class));
+        $response = $this->sendRequest($request);
+
+        return new Collection($this->transformValues($response['values'], Sprint::class));
     }
 
 }

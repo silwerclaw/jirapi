@@ -10,7 +10,10 @@ namespace Silwerclaw\Jirapi\Services;
 
 
 use Silwerclaw\Jirapi\Builder;
+use Silwerclaw\Jirapi\Exceptions\Exception;
+use Silwerclaw\Jirapi\Interfaces\RequestInterface;
 use Silwerclaw\Jirapi\Interfaces\ServiceInterface;
+use Silwerclaw\Jirapi\Request;
 
 /**
  * Class Service
@@ -45,7 +48,25 @@ abstract class Service implements ServiceInterface
     }
 
     /**
-     * Transfomr raw values to entities
+     * @return $this
+     */
+    public function initBuilder()
+    {
+        $this->builder = $this->newBuilder();
+
+        return $this;
+    }
+
+    /**
+     * @return Builder
+     */
+    public function newBuilder()
+    {
+        return new Builder();
+    }
+
+    /**
+     * Transform raw values to entities
      * 
      * @param array $values
      * @param string $entityClass
@@ -57,6 +78,50 @@ abstract class Service implements ServiceInterface
         return array_map(function($value) use($entityClass) {
             return new $entityClass($value);
         }, $values);
+    }
+
+    /**
+     * @return RequestInterface
+     */
+    protected function newRequest()
+    {
+        return new Request();
+    }
+
+    /**
+     * @param RequestInterface $request
+     * 
+     * @return array
+     */
+    protected function sendRequest(RequestInterface $request)
+    {
+        $this->mergeBuilderParams($request)->setBuilder($this->newBuilder());
+        
+        return $request->doRequest();
+    }
+
+    /**
+     * @param RequestInterface $request
+     *
+     * @return $this
+     */
+    protected function mergeBuilderParams(RequestInterface $request)
+    {
+        if ($request->getMethod() == 'GET') {
+            $request->setParams(array_merge($request->getParams(), $this->builder->toParams()));
+        }
+        
+        return $this;
+    }
+    
+    public function __call($method, $arguments = [])
+    {
+        if (method_exists($this->builder, $method)) {
+
+            call_user_func_array([$this->builder, $method], $arguments);
+        }
+        
+        return $this;
     }
     
 }
