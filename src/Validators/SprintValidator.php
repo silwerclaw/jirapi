@@ -8,7 +8,10 @@
 
 namespace Silwerclaw\Jirapi\Validators;
 
-
+/**
+ * Class SprintValidator
+ * @package Silwerclaw\Jirapi\Validators
+ */
 class SprintValidator extends Validator
 {
 

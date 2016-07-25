@@ -8,7 +8,10 @@
 
 namespace Silwerclaw\Jirapi\Exceptions;
 
-
+/**
+ * Class MultipleException
+ * @package Silwerclaw\Jirapi\Exceptions
+ */
 class MultipleException extends Exception
 {
 

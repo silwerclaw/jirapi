@@ -7,10 +7,10 @@
  */
 
 namespace Silwerclaw\Jirapi\Services;
+use Silwerclaw\Jirapi\Collections\Collection;
+use Silwerclaw\Jirapi\Entities\Issue;
 use Silwerclaw\Jirapi\Entities\Sprint;
 use Silwerclaw\Jirapi\Exceptions\Exception;
-use Silwerclaw\Jirapi\Interfaces\ServiceInterface;
-use Silwerclaw\Jirapi\Request;
 use Silwerclaw\Jirapi\Validators\SprintValidator;
 
 /**
@@ -24,8 +24,9 @@ class SprintService extends Service
      * @var array
      */
     protected $endpoints = [
-        'get'    => '/rest/agile/1.0/sprint/{sprintId}',
-        'create' => '/rest/agile/1.0/sprint'
+        'get'         => '/rest/agile/1.0/sprint/{sprintId}',
+        'create'      => '/rest/agile/1.0/sprint',
+        'getIssues'   => '/rest/agile/1.0/board/{boardId}/sprint/{sprintId}/issue'
     ];
 
     /**
@@ -101,6 +102,27 @@ class SprintService extends Service
     public function swap(int $sprintId, int $sprintIdToSwapWith)
     {
 
+    }
+
+    /**
+     * Get all issues you have access to that belong to the sprint from the board.
+     * Issue returned from this resource contains additional fields like: sprint, closedSprints, flagged and epic.
+     * Issues are returned ordered by rank. JQL order has higher priority than default rank.
+     *
+     * @param int $boardId
+     * @param int $sprintId
+     *
+     * @return Collection
+     */
+    public function getIssues(int $boardId, int $sprintId)
+    {
+        $request = $this->newRequest()
+            ->setMethod('GET')
+            ->setEndpoint(str_replace(['{boardId}', '{sprintId}'], [$boardId, $sprintId], $this->endpoints[__FUNCTION__]));
+
+        $response = $this->sendRequest($request);
+
+        return new Collection($this->transformValues($response['issues'], Issue::class));
     }
 
 

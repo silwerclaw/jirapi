@@ -13,7 +13,6 @@ use Silwerclaw\Jirapi\Collections\Collection;
 use Silwerclaw\Jirapi\Entities\Board;
 use Silwerclaw\Jirapi\Entities\Sprint;
 use Silwerclaw\Jirapi\Exceptions\Exception;
-use Silwerclaw\Jirapi\Request;
 use Silwerclaw\Jirapi\Validators\BoardValidator;
 
 /**

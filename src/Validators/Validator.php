@@ -9,8 +9,12 @@
 namespace Silwerclaw\Jirapi\Validators;
 
 
-use Silwerclaw\Jirapi\Exceptions\MultipleException;
+use Silwerclaw\Jirapi\Exceptions\ValidationException;
 
+/**
+ * Class Validator
+ * @package Silwerclaw\Jirapi\Validators
+ */
 class Validator
 {
 
@@ -37,12 +41,19 @@ class Validator
     {
         $this->data = $data;
     }
-    
+
+    /**
+     * @return array
+     */
     public function getErrors() : array
     {
         return $this->errors;
     }
 
+    /**
+     * @return bool
+     * @throws ValidationException
+     */
     public function validate() : bool
     {
         $valid = true;
@@ -59,7 +70,7 @@ class Validator
         }
 
         if (!$valid) {
-            throw new MultipleException($this->errors);
+            throw new ValidationException($this->errors);
         }
         
         return $valid;

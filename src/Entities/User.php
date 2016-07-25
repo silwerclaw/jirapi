@@ -8,7 +8,10 @@
 
 namespace Silwerclaw\Jirapi\Entities;
 
-
+/**
+ * Class User
+ * @package Silwerclaw\Jirapi\Entities
+ */
 class User extends Entity
 {
 
