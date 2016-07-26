@@ -15,4 +15,9 @@ namespace Silwerclaw\Jirapi\Exceptions;
 class ValidationException extends MultipleException
 {
 
+    /**
+     * @var string
+     */
+    protected $message = 'Data is invalid';
+
 }

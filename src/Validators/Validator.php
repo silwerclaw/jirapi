@@ -59,7 +59,7 @@ class Validator
         $valid = true;
         
         foreach ($this->rules as $rule) {
-            if ($this->{$rule}()) {
+            if (!$this->{$rule}()) {
                 $valid = false;
                 
                 if ($this->message) {
