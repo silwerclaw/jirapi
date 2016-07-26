@@ -53,4 +53,23 @@ class Builder
         return $this->params;
     }
 
+    /**
+     * @param $key
+     * @param $value
+     * 
+     * @return $this
+     */
+    public function where($key, $value)
+    {
+        if (is_array($key)) {
+            foreach ($key as $k => $value) {
+                $this->where($k, $value);
+            }
+        } else {
+            $this->params[$key] = $value;
+        }
+        
+        return $this;
+    }
+    
 }

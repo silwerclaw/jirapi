@@ -109,12 +109,12 @@ class SprintService extends Service
      * Issue returned from this resource contains additional fields like: sprint, closedSprints, flagged and epic.
      * Issues are returned ordered by rank. JQL order has higher priority than default rank.
      *
-     * @param int $boardId
      * @param int $sprintId
+     * @param int $boardId
      *
      * @return Collection
      */
-    public function getIssues(int $boardId, int $sprintId)
+    public function getIssues(int $sprintId, int $boardId)
     {
         $request = $this->newRequest()
             ->setMethod('GET')

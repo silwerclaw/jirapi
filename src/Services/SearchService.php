@@ -7,6 +7,8 @@
  */
 
 namespace Silwerclaw\Jirapi\Services;
+use Silwerclaw\Jirapi\Collections\Collection;
+use Silwerclaw\Jirapi\Entities\Issue;
 
 /**
  * Class SearchService
@@ -14,5 +16,28 @@ namespace Silwerclaw\Jirapi\Services;
  */
 class SearchService extends Service
 {
+
+    protected $endpoints = [
+        'search'           => '/rest/api/2/search'
+    ];
+
+    /**
+     * Searches for issues using JQL.
+     *
+     * @param $jql
+     *
+     * @return Collection
+     */
+    public function search($jql)
+    {
+        $request = $this->newRequest()
+            ->setMethod('POST')
+            ->setEndpoint($this->endpoints[__FUNCTION__])
+            ->setParams(['jql' => $jql]);
+
+        $response = $this->sendRequest($request);
+
+        return new Collection($this->transformValues($response['issues'], Issue::class));
+    }
 
 }

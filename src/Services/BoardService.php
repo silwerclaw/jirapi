@@ -11,6 +11,7 @@ namespace Silwerclaw\Jirapi\Services;
 
 use Silwerclaw\Jirapi\Collections\Collection;
 use Silwerclaw\Jirapi\Entities\Board;
+use Silwerclaw\Jirapi\Entities\Issue;
 use Silwerclaw\Jirapi\Entities\Sprint;
 use Silwerclaw\Jirapi\Exceptions\Exception;
 use Silwerclaw\Jirapi\Validators\BoardValidator;
@@ -23,11 +24,12 @@ class BoardService extends Service
 {
 
     protected $endpoints = [
-        'get'           => '/rest/agile/1.0/board/{boardId}',
-        'getAll'        => '/rest/agile/1.0/board',
-        'create'        => '/rest/agile/1.0/board',
-        'delete'        => '/rest/agile/1.0/board/{boardId}',
-        'getSprints'    => '/rest/agile/1.0/board/{boardId}/sprint',
+        'get'               => '/rest/agile/1.0/board/{boardId}',
+        'getAll'            => '/rest/agile/1.0/board',
+        'create'            => '/rest/agile/1.0/board',
+        'delete'            => '/rest/agile/1.0/board/{boardId}',
+        'getBackLogIssues'  => '/rest/agile/1.0/board/{boardId}/backlog',
+        'getSprints'        => '/rest/agile/1.0/board/{boardId}/sprint',
     ];
 
     /**
@@ -51,16 +53,13 @@ class BoardService extends Service
      * Returns all boards.
      * This only includes boards that the user has permission to view.
      *
-     * @param array $params
-     *
      * @return Collection
      */
-    public function getAll($params = [])
+    public function getAll()
     {
         $request = $this->newRequest()
             ->setMethod('GET')
-            ->setEndpoint($this->endpoints[__FUNCTION__])
-            ->setParams($params);
+            ->setEndpoint($this->endpoints[__FUNCTION__]);
 
         $response = $this->sendRequest($request);
 
@@ -113,10 +112,18 @@ class BoardService extends Service
      * By default, the returned issues are ordered by rank.
      *
      * @param int $boardId
+     *
+     * @return Collection
      */
     public function getBackLogIssues(int $boardId)
     {
+        $request = $this->newRequest()
+            ->setMethod('GET')
+            ->setEndpoint(str_replace('{boardId}', $boardId, $this->endpoints[__FUNCTION__]));
 
+        $response = $this->sendRequest($request);
+
+        return new Collection($this->transformValues($response['issues'], Issue::class));
     }
 
     /**
@@ -135,16 +142,14 @@ class BoardService extends Service
      * This only includes sprints that the user has permission to view.
      *
      * @param int $boardId
-     * @param array $params
      * 
      * @return Collection
      */
-    public function getSprints(int $boardId, $params = [])
+    public function getSprints(int $boardId)
     {
         $request = $this->newRequest()
             ->setMethod('GET')
-            ->setEndpoint(str_replace('{boardId}', $boardId, $this->endpoints[__FUNCTION__]))
-            ->setParams($params);
+            ->setEndpoint(str_replace('{boardId}', $boardId, $this->endpoints[__FUNCTION__]));
 
         $response = $this->sendRequest($request);
 
