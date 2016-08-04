@@ -7,6 +7,7 @@
  */
 
 namespace Silwerclaw\Jirapi\Entities;
+use Silwerclaw\Jirapi\Jirapi;
 
 /**
  * Class Board
@@ -18,5 +19,17 @@ class Board extends Entity
     const KANBAN_TYPE = 'kanban';
     
     const SCRUM_TYPE = 'scrum';
+
+    /**
+     * Get board object by id
+     *
+     * @param int $boardId
+     *
+     * @return Board
+     */
+    public static function find(int $boardId)
+    {
+        return app()->make(Jirapi::class)->getService('Board')->get($boardId);
+    }
 
 }
