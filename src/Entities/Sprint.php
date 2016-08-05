@@ -17,6 +17,8 @@ use Silwerclaw\Jirapi\Jirapi;
 class Sprint extends Entity
 {
 
+    protected $service = 'Sprint';
+
     /** Relations [start] */
 
     /** Relations [end] */
@@ -34,17 +36,5 @@ class Sprint extends Entity
     }
     
     /** Mutators [end] */
-
-    /**
-     * Get sprint object by id
-     *
-     * @param int $sprintId
-     *
-     * @return Sprint
-     */
-    public static function find(int $sprintId)
-    {
-        return app()->make(Jirapi::class)->getService('Sprint')->get($sprintId);
-    }
 
 }

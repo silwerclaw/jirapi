@@ -19,6 +19,8 @@ class Board extends Entity
     const KANBAN_TYPE = 'kanban';
     
     const SCRUM_TYPE = 'scrum';
+    
+    protected $service = 'Board';
 
     /**
      * Get board object by id
