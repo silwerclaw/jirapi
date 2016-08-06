@@ -10,6 +10,8 @@ namespace Silwerclaw\Jirapi;
 
 
 use Illuminate\Support\ServiceProvider;
+use Silwerclaw\Jirapi\Auth\Basic;
+use Silwerclaw\Jirapi\Interfaces\AuthInterface;
 
 class JirapiServiceProvider extends ServiceProvider
 {
@@ -18,12 +20,10 @@ class JirapiServiceProvider extends ServiceProvider
     {
         $configFile = __DIR__ . '/../config/jirapi.php';
         $this->publishes([$configFile => config_path('jirapi.php')], 'config');
+
+        $this->app->instance(AuthInterface::class, new Basic(config('jirapi.basic')));
         
-        $this->app->instance(Jirapi::class, new Jirapi(new Authenticator(
-            config('jirapi.basic.host'),
-            config('jirapi.basic.login'),
-            config('jirapi.basic.password')
-        )));
+        $this->app->singleton(Jirapi::class, Jirapi::class);
     }
     
     /**
