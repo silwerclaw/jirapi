@@ -10,6 +10,7 @@ namespace Silwerclaw\Jirapi;
 
 use GuzzleHttp\Client;
 use Silwerclaw\Jirapi\Exceptions\Exception;
+use Silwerclaw\Jirapi\Interfaces\AuthInterface;
 use Silwerclaw\Jirapi\Interfaces\RequestInterface;
 
 /**
@@ -19,7 +20,7 @@ use Silwerclaw\Jirapi\Interfaces\RequestInterface;
 class Request implements RequestInterface
 {
     /**
-     * @var Authenticator
+     * @var AuthInterface
      */
     protected $authenticator;
 
@@ -44,13 +45,18 @@ class Request implements RequestInterface
     protected $httpClient;
 
     /**
+     * @var array
+     */
+    protected $requestOptions = [];
+
+    /**
      * Request constructor.
      */
     public function __construct()
     {
-        $this->authenticator = Jirapi::getAuthenticator();
+        $this->authenticator = app()->make(AuthInterface::class);
 
-        if (!($this->authenticator instanceof Authenticator)) {
+        if (!$this->authenticator) {
             throw new Exception('Authenticator not defined for Jira REST API');
         }
         
@@ -62,10 +68,14 @@ class Request implements RequestInterface
      */
     public function doRequest() : array
     {
+        $this->generateRequestOptions();
+
+        $this->authenticator->authenticate($this);
+
         $request = $this->httpClient->createRequest(
             $this->method,
             $this->getUrl(),
-            $this->makeRequestConfig()
+            $this->requestOptions
         );
         
         return $this->httpClient->send($request)->json();
@@ -112,26 +122,6 @@ class Request implements RequestInterface
     }
 
     /**
-     * @param Authenticator $auth
-     *
-     * @return RequestInterface
-     */
-    public function setAuthenticator(Authenticator $auth) : RequestInterface
-    {
-        $this->authenticator = $auth;
-        
-        return $this;
-    }
-
-    /**
-     * @return Authenticator
-     */
-    public function getAuthenticator() : Authenticator
-    {
-        return $this->authenticator;
-    }
-
-    /**
      * @return string
      */
     public function getEndpoint() : string
@@ -160,14 +150,27 @@ class Request implements RequestInterface
     }
 
     /**
-     * @return array
+     * Set option to request
+     * @see \GuzzleHttp\Message\Request
+     *
+     * @param $key
+     * @param $value
+     *
+     * @return RequestInterface
      */
-    protected function makeRequestConfig() : array
+    public function setOption($key, $value)  : RequestInterface
+    {
+        $this->requestOptions[$key] = $value;
+
+        return $this;
+    }
+
+    /**
+     * @return RequestInterface
+     */
+    protected function generateRequestOptions() : RequestInterface
     {
         $config = [];
-        
-        //add authorization header
-        $config['auth'] = [$this->authenticator->getLogin(), $this->authenticator->getPassword()];
 
         //add proper content type
         $config['headers']['Content-Type'] = 'application/json'; 
@@ -180,7 +183,9 @@ class Request implements RequestInterface
                 $config['body'] = json_encode($this->params);
             }
         }
+
+        $this->requestOptions = array_merge($this->requestOptions, $config);
         
-        return $config;
+        return $this;
     }
 }

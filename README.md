@@ -42,3 +42,7 @@ php artisan vendor:publish --provider="Silwerclaw\Jirapi\JirapiServiceProvider"
 After that go to your config folder and edit fields with `host`, `login` and `password` with your values
 
 **Beware that for most of actions your account in Jira must be granted with appropriate access rights!**
+
+## Package usage
+
+Please check [WIKI](https://github.com/silwerclaw/jirapi/wiki) pages for different use cases and examples

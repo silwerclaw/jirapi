@@ -21,18 +21,26 @@ class SprintValidator extends Validator
      * @var array
      */
     protected $rules = [
-        'validateBoardId',
-        'validateName',
+        'validateBoardIdRequired',
+        'validateBoardIdIsInt',
+        'validateNameRequired',
     ];
 
-    protected function validateBoardId()
+    protected function validateBoardIdRequired()
     {
         $this->message = '"originBoardId" field is required';
         
         return isset($this->data['originBoardId']) && $this->data['originBoardId'];
     }
 
-    protected function validateName()
+    protected function validateBoardIdIsInt()
+    {
+        $this->message = '"originBoardId" field must be integer';
+
+        return isset($this->data['originBoardId']) && is_int($this->data['originBoardId']);
+    }
+
+    protected function validateNameRequired()
     {
         $this->message = '"name" field is required';
         

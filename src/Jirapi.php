@@ -8,6 +8,7 @@
 
 namespace Silwerclaw\Jirapi;
 use Silwerclaw\Jirapi\Exceptions\Exception;
+use Silwerclaw\Jirapi\Interfaces\AuthInterface;
 use Silwerclaw\Jirapi\Interfaces\ServiceInterface;
 
 /**
@@ -18,38 +19,38 @@ class Jirapi
 {
 
     /**
-     * @var Authenticator
+     * @var AuthInterface
      */
-    public static $authenticator;
+    protected $authenticator;
 
     /**
      * Jirapi constructor.
      * 
-     * @param Authenticator $authenticator
+     * @param AuthInterface $authenticator
      */
-    public function __construct(Authenticator $authenticator)
+    public function __construct(AuthInterface $authenticator)
     {
-        self::$authenticator = $authenticator;
+        $this->authenticator = $authenticator;
     }
 
     /**
-     * @param Authenticator $authenticator
+     * @param AuthInterface $authenticator
      * 
      * @return $this
      */
-    public function setAuthenticator(Authenticator $authenticator)
+    public function setAuthenticator(AuthInterface $authenticator)
     {
-        self::$authenticator = $authenticator;
+        $this->authenticator = $authenticator;
         
         return $this;
     }
 
     /**
-     * @return Authenticator
+     * @return AuthInterface
      */
-    public static function getAuthenticator()
+    public function getAuthenticator()
     {
-        return self::$authenticator;
+        return $this->authenticator;
     }
 
     /**

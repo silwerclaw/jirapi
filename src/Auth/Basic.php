@@ -2,17 +2,22 @@
 /**
  * Created by PhpStorm.
  * User: silwerclaw
- * Date: 19.07.16
- * Time: 23:59
+ * Date: 06.08.16
+ * Time: 10:38
  */
 
-namespace Silwerclaw\Jirapi;
+namespace Silwerclaw\Jirapi\Auth;
+
+
+use Silwerclaw\Jirapi\Interfaces\AuthInterface;
+use Silwerclaw\Jirapi\Interfaces\RequestInterface;
+
 
 /**
- * Class Authenticator
- * @package Silwerclaw\Jirapi
+ * Class Basic
+ * @package Silwerclaw\Jirapi\Auth
  */
-class Authenticator
+class Basic implements AuthInterface
 {
 
     /**
@@ -31,17 +36,27 @@ class Authenticator
     private $password;
 
     /**
-     * Client constructor.
+     * Basic constructor.
      * 
-     * @param string $host
-     * @param string $login
-     * @param string $password
+     * @param array $credentials
      */
-    public function __construct(string $host, string $login, string $password)
+    public function __construct(array $credentials)
     {
-        $this->host = $host;
-        $this->login = $login;
-        $this->password = $password;
+        $this->host = $credentials['host'];
+        $this->login = $credentials['login'];
+        $this->password = $credentials['password'];
+    }
+
+    /**
+     * @param RequestInterface $request
+     * 
+     * @return $this;
+     */
+    public function authenticate(RequestInterface $request)
+    {
+        $request->setOption('auth', [$this->getLogin(), $this->getPassword()]);
+        
+        return $this;
     }
 
     /**
@@ -55,9 +70,9 @@ class Authenticator
     /**
      * @param string $host
      *
-     * @return Authenticator
+     * @return $this
      */
-    public function setHost($host) : Authenticator
+    public function setHost($host)
     {
         $this->host = $host;
 
@@ -75,9 +90,9 @@ class Authenticator
     /**
      * @param string $login
      *
-     * @return Authenticator
+     * @return $this
      */
-    public function setLogin($login) : Authenticator
+    public function setLogin($login)
     {
         $this->login = $login;
 
@@ -95,9 +110,9 @@ class Authenticator
     /**
      * @param string $password
      *
-     * @return Authenticator
+     * @return $this
      */
-    public function setPassword($password) : Authenticator
+    public function setPassword($password)
     {
         $this->password = $password;
 
@@ -109,7 +124,7 @@ class Authenticator
      */
     public function getAuthorizationHeader() : string
     {
-        return 'Basic ' . base64_encode($this->login . ':' . $this->password); 
+        return 'Basic ' . base64_encode($this->login . ':' . $this->password);
     }
 
 }

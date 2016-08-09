@@ -62,4 +62,12 @@ interface RequestInterface
      */
     public function getUrl() : string;
 
+    /**
+     * @param $key
+     * @param $value
+     * 
+     * @return RequestInterface
+     */
+    public function setOption($key, $value) : RequestInterface;
+
 }

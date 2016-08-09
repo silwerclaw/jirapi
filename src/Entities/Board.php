@@ -7,7 +7,6 @@
  */
 
 namespace Silwerclaw\Jirapi\Entities;
-use Silwerclaw\Jirapi\Jirapi;
 
 /**
  * Class Board
