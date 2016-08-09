@@ -22,16 +22,4 @@ class Board extends Entity
     
     protected $service = 'Board';
 
-    /**
-     * Get board object by id
-     *
-     * @param int $boardId
-     *
-     * @return Board
-     */
-    public static function find(int $boardId)
-    {
-        return app()->make(Jirapi::class)->getService('Board')->get($boardId);
-    }
-
 }
